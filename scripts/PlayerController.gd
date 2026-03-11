@@ -15,7 +15,9 @@ extends CharacterBody2D
 @export var dash_cooldown = 1.0
 
 @onready var animated_sprite = $AnimatedSprite2D
-@onready var attack1hitbox = $Area2D/attack1hitbox
+@onready var attack1hitbox = $AttackArea2D/attack1hitbox
+@onready var attack_area = $AttackArea2D
+
 
 var is_dashing = false
 var dash_start_position = 0
@@ -32,13 +34,14 @@ func _physics_process(delta: float) -> void:
 	# Handle jump.
 	if Input.is_action_just_pressed("jump") and (is_on_floor() or is_on_wall()):
 		velocity.y = jump_force
-	
 	if Input.is_action_just_released("jump") and velocity.y < 0:
 		velocity.y *= deccelerate_on_jump_release
+	
 	#jump animation
 	if not is_on_floor() and not is_dashing and not isattacking:
 		animated_sprite.play("jump")
 		jumpcheck = true
+	
 	#landing animation
 	if is_on_floor() and jumpcheck == true and not is_dashing and not isattacking:
 		animated_sprite.play("land")
@@ -51,6 +54,7 @@ func _physics_process(delta: float) -> void:
 		speed = run_speed
 	else:
 		speed = walk_speed
+	
 	# Get the input direction and handle the movement/deceleration.
 	# As good practice, you should replace UI actions with custom gameplay actions.
 	var direction := Input.get_axis("left", "right")
@@ -61,12 +65,19 @@ func _physics_process(delta: float) -> void:
 				animated_sprite.play("run")
 			else:
 				animated_sprite.play("walk")
-			animated_sprite.flip_h = direction < 0
+			
 	else:
 		velocity.x = move_toward(velocity.x, 0, walk_speed * decceleration)
 		if is_on_floor() and not islanding and not is_dashing and not isattacking:
 			animated_sprite.play("Idle")
 	
+	# Flip sprite direction and hitbox direction
+	if direction < 0:
+		animated_sprite.flip_h = true
+		attack_area.scale.x = -1
+	elif direction > 0:
+		animated_sprite.flip_h = false
+		attack_area.scale.x = 1
 	
 	# Dash Activation
 	if Input.is_action_pressed("dash") and direction and not is_dashing and dash_timer <= 0:

@@ -490,8 +490,8 @@ animation = &"Idle"
 autoplay = "Idle"
 frame_progress = 0.8798124
 
-[node name="Area2D" type="Area2D" parent="." unique_id=1321878096]
+[node name="AttackArea2D" type="Area2D" parent="." unique_id=1321878096]
 
-[node name="attack1hitbox" type="CollisionShape2D" parent="Area2D" unique_id=46330297]
+[node name="attack1hitbox" type="CollisionShape2D" parent="AttackArea2D" unique_id=46330297]
 position = Vector2(32.5, 4)
 shape = SubResource("RectangleShape2D_51ujp")
